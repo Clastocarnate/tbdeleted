@@ -1,9 +1,9 @@
 import requests
 import json
 
-# Define your Groq API endpoint and key
-GROQ_API_URL = "https://api.groq.com/v1/completions"  # Replace with the actual endpoint
-API_KEY = "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"  # Replace with your API key
+# Define the Groq API endpoint and API key
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+API_KEY = "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"  # Replace with your actual API key
 
 def ask_groq(prompt):
     """
@@ -19,21 +19,25 @@ def ask_groq(prompt):
 
     # Define the payload (request body)
     payload = {
-        "model": "text-davinci-003",  # Replace with the model supported by Groq
-        "prompt": prompt,
-        "max_tokens": 150  # Adjust based on your needs
+        "model": "llama3-8b-8192",  # Model specified in the documentation
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     }
 
     try:
         # Send the request to the API
-        response = requests.post(GROQ_API_URL, headers=headers, data=json.dumps(payload))
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload)
 
         # Check if the request was successful
         if response.status_code == 200:
             result = response.json()
-            # Extract and print the response text
+            # Extract and print the response content
             print("Response:")
-            print(result.get("choices")[0].get("text"))
+            print(result["choices"][0]["message"]["content"])
         else:
             print(f"Error: {response.status_code} - {response.text}")
     except Exception as e:
